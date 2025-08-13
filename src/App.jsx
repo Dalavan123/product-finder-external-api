@@ -1,12 +1,14 @@
-import './App.css';
-import ProductDetail from './pages/ProductDetail';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home.jsx';
+import ProductDetail from './pages/ProductDetail.jsx';
 
-function App() {
+export default function App() {
   return (
-    <>
-      <ProductDetail />
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/product/:id' element={<ProductDetail />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
