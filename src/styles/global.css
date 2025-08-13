@@ -225,3 +225,13 @@ body {
   background: var(--card);
   color: var(--text);
 }
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr minmax(160px, 220px) minmax(180px, 240px) auto;
+  gap: 12px;
+  margin: 12px 0 16px;
+}
+.controls .btn {
+  padding: 10px 14px;
+}

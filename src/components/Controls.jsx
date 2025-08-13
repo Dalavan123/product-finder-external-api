@@ -8,6 +8,12 @@ export default function Controls({
   onSort,
   categories = [],
 }) {
+  function handleClear() {
+    onQuery('');
+    onCategory('');
+    onSort('relevance');
+  }
+
   return (
     <form className='controls' onSubmit={e => e.preventDefault()}>
       <input
@@ -39,6 +45,16 @@ export default function Controls({
         <option value='price_desc'>Pris: högt → lågt</option>
         <option value='rating_desc'>Betyg: högst → lägst</option>
       </select>
+
+      {/* Rensa-knapp (valfri, men skön att ha) */}
+      <button
+        className='btn'
+        type='button'
+        onClick={handleClear}
+        aria-label='Rensa sök och filter'
+      >
+        Rensa
+      </button>
     </form>
   );
 }

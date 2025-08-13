@@ -13,6 +13,7 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [status, setStatus] = useState('idle'); // idle|loading|success|error
   const [error, setError] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
 
   // kontroller
   const [query, setQuery] = useState('');
@@ -41,6 +42,12 @@ export default function Home() {
     return () => controller.abort();
   }, []);
 
+  // Debounce: vänta 200 ms efter att användaren slutat skriva
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQuery(query), 200);
+    return () => clearTimeout(t);
+  }, [query]);
+
   const visibleProducts = useMemo(() => {
     let list = [...products];
 
@@ -50,7 +57,7 @@ export default function Home() {
     }
 
     // filter: sök i titel + description (case-insensitive)
-    const q = query.trim().toLowerCase();
+    const q = debouncedQuery.trim().toLowerCase();
     if (q) {
       list = list.filter(
         p =>
@@ -75,7 +82,7 @@ export default function Home() {
     }
 
     return list;
-  }, [products, category, query, sort]);
+  }, [products, category, debouncedQuery, sort]);
 
   return (
     <main className='container'>
