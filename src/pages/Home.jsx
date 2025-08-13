@@ -3,23 +3,33 @@
 - visar loading/fel/resultat
 - tillgängligt (ARIA) och responsivt
 */
-import { useEffect, useState } from 'react';
-import { fetchProducts } from '../lib/apiClient.js';
+import { useEffect, useMemo, useState } from 'react';
+import { fetchProducts, fetchCategories } from '../lib/apiClient.js';
 import ProductCard from '../components/ProductCard.jsx';
 import ThemeToggle from '../components/ThemeToggle.jsx';
-
+import Controls from '../components/Controls.jsx';
 export default function Home() {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [status, setStatus] = useState('idle'); // idle|loading|success|error
   const [error, setError] = useState('');
+
+  // kontroller
+  const [query, setQuery] = useState('');
+  const [category, setCategory] = useState('');
+  const [sort, setSort] = useState('relevance');
 
   useEffect(() => {
     const controller = new AbortController();
     (async () => {
       try {
         setStatus('loading');
-        const data = await fetchProducts({ signal: controller.signal });
-        setProducts(data);
+        const [items, categories] = await Promise.all([
+          fetchProducts({ signal: controller.signal }),
+          fetchCategories({ signal: controller.signal }),
+        ]);
+        setProducts(items);
+        setCategories(categories);
         setStatus('success');
       } catch (err) {
         if (err.name !== 'AbortError') {
@@ -30,6 +40,42 @@ export default function Home() {
     })();
     return () => controller.abort();
   }, []);
+
+  const visibleProducts = useMemo(() => {
+    let list = [...products];
+
+    //filter: category
+    if (category) {
+      list = list.filter(p => p.category === category);
+    }
+
+    // filter: sök i titel + description (case-insensitive)
+    const q = query.trim().toLowerCase();
+    if (q) {
+      list = list.filter(
+        p =>
+          p.title?.toLowerCase().includes(q) ||
+          p.description?.toLowerCase().includes(q)
+      );
+    }
+
+    // sortering
+    switch (sort) {
+      case 'price_asc':
+        list.sort((a, b) => a.price - b.price);
+        break;
+      case 'price_desc':
+        list.sort((a, b) => b.price - a.price);
+        break;
+      case 'rating_desc':
+        list.sort((a, b) => (b.rating?.rate ?? 0) - (a.rating?.rate ?? 0));
+        break;
+      default:
+        /* relevance: låt API-ordningen gälla */ break;
+    }
+
+    return list;
+  }, [products, category, query, sort]);
 
   return (
     <main className='container'>
@@ -48,6 +94,22 @@ export default function Home() {
         </div>
       </header>
 
+      {/* kontroller */}
+      <Controls
+        query={query}
+        onQuery={setQuery}
+        category={category}
+        onCategory={setCategory}
+        sort={sort}
+        onSort={setSort}
+        categories={categories}
+      />
+
+      {/* aria-live för antal träffar */}
+      <p aria-live='polite' className='muted' style={{ marginTop: 0 }}>
+        {status === 'success' ? `${visibleProducts.length} träffar` : '\u00A0'}
+      </p>
+
       {status === 'loading' && (
         <div role='status' aria-live='polite' className='info'>
           Laddar produkter…
@@ -65,7 +127,7 @@ export default function Home() {
 
       {status === 'success' && (
         <section aria-label='Produktlista' className='products-grid'>
-          {products.map(p => (
+          {visibleProducts.map(p => (
             <ProductCard key={p.id} product={p} />
           ))}
         </section>
