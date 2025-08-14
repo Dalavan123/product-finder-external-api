@@ -1,28 +1,44 @@
+// src/lib/apiClient.js
+
 /**
- * Varför här? Vi vill att all kod som pratar med externa API:er ligger samlat. 
- Då blir det lättare att testa, byta API senare och återanvända funktioner
- * Hämtar alla produkter.
- * Separat funktion = lätt att återanvända och testa.
- * Vi kollar alltid res.ok för att få tydliga fel vid nätverks-/API-problem.
- * Vi tar emot en signal (AbortController) så att vi kan avbryta hämtningen
- om användaren lämnar sidan – det minskar ”hängande” requests och varningar i konsolen.
+ * Samlad modul för externa API-anrop (enklare att testa/byta API).
+ * Denna version använder DummyJSON: https://dummyjson.com
+ * Normaliserar rating från number -> { rate } så resten av appen slipper ändras.
  */
 
-const BASE_URL = 'https://fakestoreapi.com';
+const BASE_URL = 'https://dummyjson.com';
+
+function normalizeProducts(items = []) {
+  return items.map(p => ({
+    ...p,
+    image: p.image ?? p.thumbnail, // stöd båda formaten
+    rating: typeof p.rating === 'number' ? { rate: p.rating } : p.rating,
+  }));
+}
 
 export async function fetchProducts({ signal } = {}) {
   const res = await fetch(`${BASE_URL}/products`, { signal });
   if (!res.ok) {
     throw new Error(`Kunde inte hämta produkter (HTTP ${res.status})`);
   }
-  // API:t svarar med JSON-array av produkter
-  return res.json();
+  const data = await res.json(); // { products: [...], total, skip, limit }
+  return normalizeProducts(data.products); // returnera arrayen + normalisera rating
 }
 
 export async function fetchCategories({ signal } = {}) {
-  const res = await fetch('https://fakestoreapi.com/products/categories', {
-    signal,
-  });
+  const res = await fetch(`${BASE_URL}/products/categories`, { signal });
   if (!res.ok) throw new Error('Kunde inte hämta kategorier');
-  return res.json(); // ex: ["electronics","jewelery","men's clothing","women's clothing"]
+
+  const data = await res.json();
+  // returnera bara en array av strängar
+  return data.map(c => c.slug);
+}
+
+// (valfritt om du använder detaljsida via id)
+export async function fetchProductById(id, { signal } = {}) {
+  const res = await fetch(`${BASE_URL}/products/${id}`, { signal });
+  if (!res.ok)
+    throw new Error(`Kunde inte hämta produkt ${id} (HTTP ${res.status})`);
+  const p = await res.json();
+  return normalizeProducts([p])[0];
 }

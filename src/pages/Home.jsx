@@ -30,6 +30,7 @@ export default function Home() {
           fetchCategories({ signal: controller.signal }),
         ]);
         setProducts(items);
+        console.log('Fetched products:', items);
         setCategories(categories);
         setStatus('success');
       } catch (err) {
