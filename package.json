@@ -44,5 +44,12 @@
     "vite": "^7.1.2",
     "vitest": "^2.1.9",
     "whatwg-fetch": "^3.6.20"
+  },
+  "vitest": {
+    "environment": "jsdom",
+    "setupFiles": [
+      "./src/tests/setup.js"
+    ],
+    "globals": true
   }
 }

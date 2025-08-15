@@ -13,7 +13,16 @@ export default function ProductCard({ product }) {
   return (
     <article className='card' aria-labelledby={titleId}>
       <div className='card-media'>
-        <img src={image} alt={title} loading='lazy' />
+        {image ? (
+          <img src={image} alt={title || 'Produktbild'} loading='lazy' />
+        ) : (
+          // enkel platshållare så layouten inte hoppar
+          <div
+            data-testid='placeholder-image'
+            aria-label='Ingen bild tillgänglig'
+            className='card-media--placeholder'
+          />
+        )}
       </div>
 
       <div className='card-body'>
@@ -22,13 +31,13 @@ export default function ProductCard({ product }) {
         </h2>
         <p className='card-price'>{formattedPrice}</p>
 
-        {rating && (
+        {rating?.rate != null && (
           <p className='card-rating' aria-label={`Betyg ${rating.rate} av 5`}>
-            <span aria-hidden='true'>⭐</span> {rating.rate} ({rating.count})
+            <span aria-hidden='true'>⭐</span> {rating.rate}
+            {typeof rating.count === 'number' ? ` (${rating.count})` : null}
           </p>
         )}
 
-        {/* Neutral knapp i båda teman */}
         <Link className='btn' to={`/product/${id}`}>
           Visa detaljer
         </Link>

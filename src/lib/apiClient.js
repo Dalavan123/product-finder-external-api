@@ -1,54 +1,84 @@
 // src/lib/apiClient.js
 
-/**
- * Samlad modul för externa API-anrop (enklare att testa/byta API).
- * Denna version använder DummyJSON: https://dummyjson.com
- * Normaliserar rating från number -> { rate } så resten av appen slipper ändras.
- */
-
 const BASE_URL = 'https://dummyjson.com';
 
-//enkel cache i minnet
+// enkel cache i minnet
 let cachedProducts = null;
 let cacheTimestamp = null;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minuter i millisekunder
+const CACHE_TTL = 5 * 60 * 1000; // 5 min
+
+// Välj första giltiga bildsträng: image -> thumbnail -> images[0]
+function pickImage(p) {
+  const candidates = [
+    typeof p.image === 'string' ? p.image.trim() : '',
+    typeof p.thumbnail === 'string' ? p.thumbnail.trim() : '',
+    Array.isArray(p.images) && typeof p.images[0] === 'string'
+      ? p.images[0].trim()
+      : '',
+  ];
+  for (const c of candidates) {
+    if (c) return c;
+  }
+  return null;
+}
+
+function normalizeProduct(p = {}) {
+  const rating =
+    typeof p.rating === 'number'
+      ? { rate: p.rating }
+      : p.rating && typeof p.rating.rate === 'number'
+      ? { rate: p.rating.rate }
+      : { rate: 0 };
+
+  return {
+    id: p.id,
+    title: p.title,
+    description: p.description,
+    price: p.price,
+    category: p.category,
+    rating,
+    image: pickImage(p),
+
+    // behåll originalfält om du använder dem någon annanstans
+    thumbnail: p.thumbnail,
+    images: p.images,
+  };
+}
 
 function normalizeProducts(items = []) {
-  return items.map(p => ({
-    ...p,
-    image: p.image ?? p.thumbnail ?? p.images?.[0] ?? '',
-    rating: typeof p.rating === 'number' ? { rate: p.rating } : p.rating,
-  }));
+  return items.map(normalizeProduct);
 }
 
 export async function fetchProducts({ signal } = {}) {
   const now = Date.now();
 
-  // Använd cache om den är färsk
+  // cache
   if (cachedProducts && cacheTimestamp && now - cacheTimestamp < CACHE_TTL) {
     return cachedProducts;
-  } //returnera direkt från cache
+  }
 
   const res = await fetch(`${BASE_URL}/products?limit=100`, { signal });
   if (!res.ok) {
     throw new Error(`Kunde inte hämta produkter (HTTP ${res.status})`);
   }
-  const data = await res.json(); //{products, total, ...}
+  const data = await res.json(); // { products, ... }
 
-  cachedProducts = normalizeProducts(data.products);
-  cacheTimestamp = now; // spara tidpunkten
+  cachedProducts = normalizeProducts(
+    Array.isArray(data.products) ? data.products : []
+  );
+  cacheTimestamp = now;
   return cachedProducts;
 }
 
 export async function fetchCategories({ signal } = {}) {
-  const products = await fetchProducts({ signal }); //återanvänder cache
-  // Plocka unika kategorier
-
+  const products = await fetchProducts({ signal }); // återanvänder cache
   return [...new Set(products.map(p => p.category))];
 }
 
-// (valfritt om du använder detaljsida via id)
 export async function fetchProductById(id, { signal } = {}) {
-  const products = await fetchProducts({ signal }); //återanvänder cache
+  const products = await fetchProducts({ signal });
   return products.find(p => p.id === Number(id));
 }
+
+// (valfritt – praktiskt i tester om du vill forcera tom cache)
+// export function __clearCache() { cachedProducts = null; cacheTimestamp = null }

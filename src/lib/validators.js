@@ -25,3 +25,13 @@ export function isValidCategory(category) {
   // endast bokstäver och mellanslag
   return /^[\p{L} ]+$/u.test(trimmed);
 }
+
+// En enkel, tydlig named export som testen kan importera
+export function isValidQuery(q) {
+  if (typeof q !== 'string') return false;
+  if (q.length > 100) return false;
+  // blockera < och >
+  if (/[<>]/.test(q)) return false;
+  // tillåt bokstäver/siffror/mellanslag + några vanliga tecken
+  return /^[\p{L}\p{N}\s\-\.,_:'"()!?/\\]*$/u.test(q);
+}
