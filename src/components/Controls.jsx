@@ -29,9 +29,9 @@ export default function Controls({
         aria-label='Kategori'
       >
         <option value=''>Alla kategorier</option>
-        {categories.map(cat => (
-          <option key={cat.slug} value={cat.slug}>
-            {cat.name}
+        {categories.map(c => (
+          <option key={c} value={c}>
+            {c}
           </option>
         ))}
       </select>
