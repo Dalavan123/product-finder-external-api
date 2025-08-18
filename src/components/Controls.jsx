@@ -1,4 +1,11 @@
 // src/components/Controls.jsx
+
+/**
+ * Filterkontroller
+ * Syfte: sök-input, kategorilista och sorteringsselect + Rensa-knapp.
+ * Viktigt: aria-labels på alla inputs/selects för tillgänglighet.
+ */
+
 export default function Controls({
   query,
   onQuery,
@@ -13,6 +20,8 @@ export default function Controls({
     onCategory('');
     onSort('relevance');
   }
+
+  const isPristine = !query && !category && sort === 'relevance';
 
   return (
     <form className='controls' onSubmit={e => e.preventDefault()}>
@@ -40,7 +49,7 @@ export default function Controls({
         onChange={e => onSort(e.target.value)}
         aria-label='Sortering'
       >
-        <option value='relevance'>Relevans</option>
+        <option value='relevance'>Sortering</option>
         <option value='price_asc'>Pris: lågt → högt</option>
         <option value='price_desc'>Pris: högt → lågt</option>
         <option value='rating_desc'>Betyg: högst → lägst</option>
@@ -52,6 +61,8 @@ export default function Controls({
         type='button'
         onClick={handleClear}
         aria-label='Rensa sök och filter'
+        disabled={isPristine}
+        title={isPristine ? 'Inget att rensa' : undefined}
       >
         Rensa
       </button>

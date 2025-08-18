@@ -1,4 +1,10 @@
 /* src/styles/global.css */
+/*
+  Global CSS (designsystem)
+  Syfte: CSS-variabler för tema, grid, kort, knappar och responsiva regler.
+  Viktigt: .products-grid använder minmax(220px, 1fr) + auto-fit för adaptiv layout.
+*/
+
 :root {
   --bg: #f7f8fb;
   --card: #ffffff;
@@ -64,12 +70,14 @@ body {
   margin-bottom: 16px;
 }
 
+/* Grid: adaptiv layout som flyter från 1 kolumn upp till så många som ryms */
 .products-grid {
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
+/* Kort: visuella tokens (border, skugga) och lätt hover-effekt */
 .card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -229,7 +237,7 @@ body {
   color: var(--text);
 }
 
-/* ≥520px: 2 kolumner (sök | resten) */
+/* låter kontroller krympa till 2 kolumner när skärmen minskad: ≥520px: 2 kolumner (sök | resten) */
 @media (min-width: 520px) {
   .controls {
     grid-template-columns: 1fr 1fr;
@@ -261,7 +269,7 @@ body {
   }
 }
 
-/* egen mediayta för detaljsidan (mindre än listans card-media) */
+/* Detaljvy: håll bilden rimlig i storlek, och inte dominerar skärmen */
 .detail-media {
   background: var(--card);
   border: 1px solid var(--border);

@@ -1,4 +1,10 @@
 // src/pages/ProductDetail.jsx
+/**
+ * Sida: ProductDetail
+ * Syfte: hämtar en specifik produkt (via id i URL) och visar detaljer.
+ * Egen extra "Generera förbättrad beskrivning"-knapp som POST:ar till /api/generate.
+ */
+
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchProductById } from '../lib/apiClient';

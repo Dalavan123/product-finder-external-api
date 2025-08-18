@@ -1,3 +1,9 @@
+/**
+ * Vite.konfig.js
+ * Syfte: aktiverar React-plugin och proxyar /api → http://localhost:5174 (lokal express).
+ * Test: innehåller vitest-inställningar (jsdom, setup-fil, CSS i tester).
+ */
+
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 

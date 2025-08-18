@@ -17,7 +17,10 @@
     "cy:open": "cypress open",
     "e2e": "cypress run",
     "e2e:dev": "concurrently -n WEB,CYPRESS -c green,magenta \"npm run dev\" \"npm run cy:open\"",
-    "e2e:preview": "concurrently -n WEB,CYPRESS -c green,magenta \"npm run preview\" \"npm run cy:open\""
+    "e2e:preview": "concurrently -n WEB,CYPRESS -c green,magenta \"npm run preview\" \"npm run cy:open\"",
+    "cy:open:real": "cypress open --env USE_REAL_API=true",
+    "e2e:real": "cypress run --env USE_REAL_API=true",
+    "e2e:ci": "concurrently -n WEB,CYPRESS -c green,magenta \"vite preview --port 4173\" \"cypress run --config baseUrl=http://localhost:4173\""
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -36,20 +39,14 @@
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.0",
     "concurrently": "^9.0.0",
-    "cross-fetch": "^4.1.0",
     "cypress": "^14.5.4",
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
-    "jest-axe": "^10.0.0",
-    "jest-environment-jsdom": "^30.0.5",
     "jsdom": "^25.0.1",
-    "msw": "^2.10.5",
     "rimraf": "^6.0.1",
-    "supertest": "^7.1.4",
     "vite": "^7.1.2",
-    "vitest": "^2.1.9",
-    "whatwg-fetch": "^3.6.20"
+    "vitest": "^2.1.9"
   }
 }

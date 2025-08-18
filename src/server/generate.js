@@ -1,3 +1,11 @@
+//src/server/generate.js
+
+/**
+ * Route: POST /api/generate
+ * Body: { title, description, tone }
+ * Syfte: generera säljtext baserat på titel/beskrivning (mockad i dev innan implementering av riktig AI).
+ */
+
 export async function generateImprovedText({
   title,
   description,

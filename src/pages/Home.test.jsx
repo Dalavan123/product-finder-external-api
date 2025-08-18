@@ -1,4 +1,9 @@
 // src/pages/Home.test.jsx
+/**
+ * Tester: Home
+ * Syfte: verifierar att sökfältet renderas och att en mockad produkt listas.
+ * Viktigt: wrap i MemoryRouter pga länkar i ProductCard.
+ */
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { vi, describe, it, afterEach, expect } from 'vitest';

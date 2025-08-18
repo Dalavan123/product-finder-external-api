@@ -1,3 +1,9 @@
+/**
+ * Produktkort
+ * Syfte: visar bild, titel, pris, betyg + länk till detaljsida.
+ * Viktigt: <a> måste ha tydlig label och fungera med tangentbord och skärmläsare.
+ */
+
 import { Link } from 'react-router-dom';
 
 export default function ProductCard({ product }) {

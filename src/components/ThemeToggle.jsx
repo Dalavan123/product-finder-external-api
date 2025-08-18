@@ -1,3 +1,9 @@
+/**
+ * ThemeToggle
+ * Syfte: växlar data-theme mellan 'light'/'dark' på <html>.
+ * Viktigt: aria-pressed + titeltexter för tillgänglighet.
+ */
+
 import { useEffect, useState } from 'react';
 
 export default function ThemeToggle() {

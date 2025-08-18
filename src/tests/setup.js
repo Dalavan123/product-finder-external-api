@@ -1,12 +1,20 @@
 // src/tests/setup.js
+/**
+ * Vitest setup
+ * Syfte: init för testmiljö (jsdom), jest-dom matchers, ev. MSW.
+ * Innehåller mockad data för test av Home och ProductDetail.
+ */
+
 import '@testing-library/jest-dom/vitest';
 
-// Polyfills som ibland saknas i jsdom
+/*Polyfills som ibland saknas i jsdom
+Polyfills är som adaptersladd som gör att funktioner som vissa miljöer saknas ändå finns,
+exempel om Textencoder saknas använd Nodes varianter*/
 import { TextEncoder, TextDecoder } from 'util';
 if (!globalThis.TextEncoder) globalThis.TextEncoder = TextEncoder;
 if (!globalThis.TextDecoder) globalThis.TextDecoder = TextDecoder;
 
-// Gemensam fetch-mock för testerna (offline & deterministiskt)
+// Gemensam fetch-mock för testerna (offline & deterministiskt, dvs alltid samma resultat när vi kör saamma test då vi testar ej mot nätverk utan mot mock)
 const realFetch = globalThis.fetch;
 
 globalThis.fetch = async (input, init) => {

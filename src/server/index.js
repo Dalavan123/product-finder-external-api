@@ -1,3 +1,10 @@
+/**
+ * Express-server (lokal)
+ * startar express, CORS, JSON, mountar
+ * Syfte: exponerar /api/generate för AI-text (mock/forward).
+ * Viktigt: körs på 5174. Vite proxyar /api dit i dev.
+ */
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';

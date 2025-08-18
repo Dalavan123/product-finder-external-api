@@ -1,6 +1,7 @@
 // tests/smoke.test.jsx
 
-/* Denna fil testar snabbt att Vitest fungerar. src/tests/smoke.test.js*/
+/* Denna fil testar snabbt att Vitest fungerar.
+Syfte: snabb sanity att appen mountar utan krasch. */
 
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';

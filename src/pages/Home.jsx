@@ -1,9 +1,16 @@
 // src/pages/Home.jsx
-/* Varför?
-- startar hämtning vid mount
-- visar loading/fel/resultat
-- tillgängligt (ARIA) och responsivt
-*/
+/**
+ * Sida: Home (produktlista)
+ * Gör: hämtar produkter + kategorier, låter användaren söka/filter/sortera
+ * Varför så här?
+ *  - Hämtning i useEffect + AbortController för att undvika state-uppdatering efter unmount 
+ - (dvs. aborten tillåter appen avsluta en pågående fetch om komponenten försvinner/användaren lämnar sidan.)
+ *  - Debounce på sök (200ms) för att undvika onödiga filteromräkningar
+ *  - useMemo för att härleda "visibleProducts" effektivt (filter + sort endast när inputs ändras) 
+ - (state är som ingredienser som sparar värden för respektive ingrediens, memo sparar samlade maträtten, om något omrenderas såsom mörkt läge så 
+ håller memo kvar värdena utan att omrenderas)
+ */
+
 import { useEffect, useMemo, useState } from 'react';
 import { fetchProducts, fetchCategories } from '../lib/apiClient.js';
 import ProductCard from '../components/ProductCard.jsx';
@@ -11,24 +18,23 @@ import ThemeToggle from '../components/ThemeToggle.jsx';
 import Controls from '../components/Controls.jsx';
 
 export default function Home() {
+  // UI-state
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [status, setStatus] = useState('idle'); // idle|loading|success|error
+  const [status, setStatus] = useState('idle'); // 'idle' (startvärde, inget hänt än) | 'loading' | 'success' | 'error'
   const [error, setError] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
 
-  // kontroller
+  // kontroller (inputs)
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('');
   const [sort, setSort] = useState('relevance');
 
-  useEffect(() => {
-    console.log('%cHOME mounted', 'color: green');
-    return () => console.log('%cHOME unmounted', 'color: orange');
-  }, []);
+  // debounced söksträng (för att inte filtrera på varje tangenttryck)
+  const [debouncedQuery, setDebouncedQuery] = useState('');
 
+  // Hämta produkter + kategorier på mount
   useEffect(() => {
-    const controller = new AbortController();
+    const controller = new AbortController(); // gör att vi kan avbryta fetch om komponenten unmountas
     (async () => {
       try {
         setStatus('loading');
@@ -40,30 +46,30 @@ export default function Home() {
         setCategories(cats);
         setStatus('success');
       } catch (err) {
+        // ignorera AbortError (den kastas när vi avbryter, behöver inte logga allt i konsollen)
         if (err.name !== 'AbortError') {
           setError(err.message || 'Något gick fel');
           setStatus('error');
         }
       }
     })();
-    return () => controller.abort();
+    return () => controller.abort(); // avbryt på unmount
   }, []);
 
-  // Debounce: vänta 200 ms efter att användaren slutat skriva
+  // Debounce: vänta 200 ms efter att användaren slutat skriva innan vi filtrerar
   useEffect(() => {
     const t = setTimeout(() => setDebouncedQuery(query), 200);
     return () => clearTimeout(t);
   }, [query]);
 
+  // Härled synlig lista (filter + sort) när inputs ändras
   const visibleProducts = useMemo(() => {
     let list = [...products];
 
-    // filter: category
     if (category) {
       list = list.filter(p => p.category === category);
     }
 
-    // filter: sök i titel + description (case-insensitive)
     const q = debouncedQuery.trim().toLowerCase();
     if (q) {
       list = list.filter(
@@ -73,7 +79,6 @@ export default function Home() {
       );
     }
 
-    // sortering
     switch (sort) {
       case 'price_asc':
         list.sort((a, b) => a.price - b.price);
@@ -85,7 +90,7 @@ export default function Home() {
         list.sort((a, b) => (b.rating?.rate ?? 0) - (a.rating?.rate ?? 0));
         break;
       default:
-        /* relevance: låt API-ordningen gälla */ break;
+      // relevance → behåll API-ordningen
     }
 
     return list;
@@ -106,7 +111,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* kontroller */}
       <Controls
         query={query}
         onQuery={setQuery}
@@ -117,7 +121,7 @@ export default function Home() {
         categories={categories}
       />
 
-      {/* aria-live för antal träffar */}
+      {/* aria-live gör att hjälpmedel (skärmläsare) får uppdatering när antal träffar ändras */}
       <p aria-live='polite' className='muted' style={{ marginTop: 0 }}>
         {status === 'success' ? `${visibleProducts.length} träffar` : '\u00A0'}
       </p>
@@ -142,6 +146,11 @@ export default function Home() {
           {visibleProducts.map(p => (
             <ProductCard key={p.id} product={p} />
           ))}
+          {visibleProducts.length === 0 && (
+            <div className='muted' role='status' style={{ padding: 12 }}>
+              Inga produkter matchar dina filter.
+            </div>
+          )}
         </section>
       )}
     </main>

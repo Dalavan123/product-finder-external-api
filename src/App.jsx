@@ -1,8 +1,12 @@
 // src/App.jsx
+/**
+ * App (routing)
+ * Syfte: definierar sidrutter: "/" (Home), "/product/:id" (ProductDetail).
+ */
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import ProductDetail from './pages/ProductDetail.jsx';
-import './styles/global.css';
 
 export default function App() {
   return (
