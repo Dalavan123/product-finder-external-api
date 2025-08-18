@@ -1,36 +1,47 @@
+// src/pages/ProductDetail.jsx
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { fetchProductById } from '../lib/apiClient';
+
+console.log('ProductDetail monterades');
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
-  const [status, setStatus] = useState('loading'); // loading|ok|error
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [aiText, setAiText] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
-    const c = new AbortController();
-    (async () => {
-      try {
-        const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
-          signal: c.signal,
-        });
-        if (!res.ok)
-          throw new Error(`Kunde inte hämta produkt (HTTP ${res.status})`);
-        setProduct(await res.json());
-        setStatus('ok');
-      } catch (e) {
-        if (e.name !== 'AbortError') setStatus('error');
-      }
-    })();
-    return () => c.abort();
+    let active = true;
+    setLoading(true);
+    setError(null);
+    setProduct(null);
+
+    fetchProductById(id)
+      .then(p => {
+        if (!active) return;
+        if (p) setProduct(p);
+        else setError(new Error('Produkten hittades inte'));
+      })
+      .catch(e => {
+        if (!active) return;
+        setError(e);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, [id]);
 
   async function handleGenerate() {
     if (!product) return;
-    setLoading(true);
-    setError('');
+    setAiLoading(true);
+    setError(null);
     setAiText('');
     try {
       const res = await fetch('/api/generate', {
@@ -46,13 +57,13 @@ export default function ProductDetail() {
       const data = await res.json();
       setAiText(data.text || '');
     } catch (e) {
-      setError(e.message || 'Något gick fel');
+      setError(e instanceof Error ? e.message : 'Något gick fel');
     } finally {
-      setLoading(false);
+      setAiLoading(false);
     }
   }
 
-  if (status === 'loading')
+  if (loading) {
     return (
       <main className='container'>
         <p role='status' aria-live='polite'>
@@ -60,20 +71,38 @@ export default function ProductDetail() {
         </p>
       </main>
     );
-  if (status === 'error')
+  }
+
+  if (error) {
     return (
       <main className='container'>
-        <p role='alert'>Kunde inte hämta produkten.</p>
+        <p role='alert'>
+          Kunde inte hämta produkten: {String(error.message || error)}
+        </p>
+        <Link className='btn' to='/'>
+          {' '}
+          ← Tillbaka{' '}
+        </Link>
+      </main>
+    );
+  }
+
+  if (!product) {
+    return (
+      <main className='container'>
+        <p role='alert'>Produkten saknas.</p>
         <Link className='btn' to='/'>
           ← Tillbaka
         </Link>
       </main>
     );
+  }
 
   return (
     <main className='container'>
-      <Link className='btn' to='/' style={{ marginBottom: 12 }}>
-        ← Tillbaka
+      <Link className='btn' to='/'>
+        {' '}
+        ← Tillbaka{' '}
       </Link>
       <article className='card' style={{ padding: 16 }}>
         <h1 className='card-title'>{product.title}</h1>
@@ -83,17 +112,12 @@ export default function ProductDetail() {
           <button
             className='btn btn--primary'
             onClick={handleGenerate}
-            disabled={loading}
+            disabled={aiLoading}
           >
-            {loading ? 'Genererar…' : 'Generera förbättrad beskrivning'}
+            {aiLoading ? 'Genererar…' : 'Generera förbättrad beskrivning'}
           </button>
         </div>
 
-        {error && (
-          <div role='alert' className='error' style={{ marginTop: 12 }}>
-            {error}
-          </div>
-        )}
         {aiText && (
           <div
             className='info'

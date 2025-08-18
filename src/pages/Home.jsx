@@ -1,3 +1,4 @@
+// src/pages/Home.jsx
 /* Varför?
 - startar hämtning vid mount
 - visar loading/fel/resultat
@@ -8,6 +9,7 @@ import { fetchProducts, fetchCategories } from '../lib/apiClient.js';
 import ProductCard from '../components/ProductCard.jsx';
 import ThemeToggle from '../components/ThemeToggle.jsx';
 import Controls from '../components/Controls.jsx';
+
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -21,17 +23,21 @@ export default function Home() {
   const [sort, setSort] = useState('relevance');
 
   useEffect(() => {
+    console.log('%cHOME mounted', 'color: green');
+    return () => console.log('%cHOME unmounted', 'color: orange');
+  }, []);
+
+  useEffect(() => {
     const controller = new AbortController();
     (async () => {
       try {
         setStatus('loading');
-        const [items, categories] = await Promise.all([
+        const [items, cats] = await Promise.all([
           fetchProducts({ signal: controller.signal }),
           fetchCategories({ signal: controller.signal }),
         ]);
         setProducts(items);
-        console.log('Fetched products:', items);
-        setCategories(categories);
+        setCategories(cats);
         setStatus('success');
       } catch (err) {
         if (err.name !== 'AbortError') {
@@ -52,7 +58,7 @@ export default function Home() {
   const visibleProducts = useMemo(() => {
     let list = [...products];
 
-    //filter: category
+    // filter: category
     if (category) {
       list = list.filter(p => p.category === category);
     }
@@ -93,9 +99,7 @@ export default function Home() {
       >
         <div>
           <h1>Produkter</h1>
-          <p className='muted'>
-            Data hämtas från ett externt API (Fake Store API).
-          </p>
+          <p className='muted'>Data hämtas från ett externt API (DummyJSON).</p>
         </div>
         <div style={{ marginLeft: 'auto' }}>
           <ThemeToggle />

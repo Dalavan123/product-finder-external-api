@@ -213,12 +213,15 @@ body {
 /* --- Controls (sök/filter/sort) --- */
 .controls {
   display: grid;
-  grid-template-columns: 1fr minmax(160px, 220px) minmax(180px, 240px);
   gap: 12px;
+  grid-template-columns: 1fr; /* 1 kolumn på mobil */
   margin: 12px 0 16px;
 }
+
+/* låt barnen faktiskt få krympa och fylla sin ruta */
 .controls input,
-.controls select {
+.controls select,
+.controls .btn {
   padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -226,12 +229,20 @@ body {
   color: var(--text);
 }
 
-.controls {
-  display: grid;
-  grid-template-columns: 1fr minmax(160px, 220px) minmax(180px, 240px) auto;
-  gap: 12px;
-  margin: 12px 0 16px;
+/* ≥520px: 2 kolumner (sök | resten) */
+@media (min-width: 520px) {
+  .controls {
+    grid-template-columns: 1fr 1fr;
+  }
 }
-.controls .btn {
-  padding: 10px 14px;
+
+/* ≥900px: 4 kolumner som på desktop */
+@media (min-width: 900px) {
+  .controls {
+    grid-template-columns:
+      1fr /* Sök */
+      minmax(160px, 220px) /* Kategori */
+      minmax(180px, 240px) /* Sortera */
+      auto; /* Rensa-knappen */
+  }
 }
