@@ -246,3 +246,69 @@ body {
       auto; /* Rensa-knappen */
   }
 }
+
+/* ===== Produktdetalj ===== */
+.product-detail {
+  display: grid;
+  gap: 16px;
+}
+
+/* två kolumner på större skärmar */
+@media (min-width: 900px) {
+  .product-detail {
+    grid-template-columns: 1fr 1.1fr;
+    align-items: start;
+  }
+}
+
+/* egen mediayta för detaljsidan (mindre än listans card-media) */
+.detail-media {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  max-width: min(640px, 92vw); /* begränsa bredd */
+  margin: 0 auto;
+}
+
+/* lås ner bildens maxhöjd så den inte dominerar */
+.detail-media img {
+  max-width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+}
+
+/* textdelen */
+.detail-body {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+/* rad med pris + betyg */
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  color: var(--muted);
+}
+
+.detail-price {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.detail-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.detail-rating span[aria-hidden='true'] {
+  line-height: 1;
+}

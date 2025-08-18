@@ -5,6 +5,17 @@ import { fetchProductById } from '../lib/apiClient';
 
 console.log('ProductDetail monterades');
 
+function formatPrice(n) {
+  try {
+    return new Intl.NumberFormat('sv-SE', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(n);
+  } catch {
+    return `${n} US$`;
+  }
+}
+
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -100,34 +111,61 @@ export default function ProductDetail() {
 
   return (
     <main className='container'>
-      <Link className='btn' to='/'>
-        {' '}
-        ← Tillbaka{' '}
+      <Link className='btn' to='/' style={{ marginBottom: 12 }}>
+        ← Tillbaka
       </Link>
-      <article className='card' style={{ padding: 16 }}>
-        <h1 className='card-title'>{product.title}</h1>
-        <p style={{ opacity: 0.9 }}>{product.description}</p>
 
-        <div style={{ marginTop: 12 }}>
-          <button
-            className='btn btn--primary'
-            onClick={handleGenerate}
-            disabled={aiLoading}
-          >
-            {aiLoading ? 'Genererar…' : 'Generera förbättrad beskrivning'}
-          </button>
-        </div>
+      <section className='product-detail'>
+        <figure className='detail-media'>
+          {product.image ? (
+            <img src={product.image} alt={product.title} loading='lazy' />
+          ) : (
+            <div className='muted' style={{ padding: 16 }}>
+              Ingen bild
+            </div>
+          )}
+        </figure>
 
-        {aiText && (
-          <div
-            className='info'
-            aria-live='polite'
-            style={{ whiteSpace: 'pre-wrap', marginTop: 12 }}
-          >
-            {aiText}
+        <article className='detail-body'>
+          <h1 className='card-title' style={{ fontSize: '1.4rem' }}>
+            {product.title}
+          </h1>
+
+          <div className='detail-meta'>
+            <div className='detail-price'>{formatPrice(product.price)}</div>
+            <div
+              className='detail-rating'
+              aria-label={`Betyg ${product?.rating?.rate ?? 0} av 5`}
+              title={`Betyg ${product?.rating?.rate ?? 0} av 5`}
+            >
+              <span aria-hidden='true'>⭐</span>
+              {product?.rating?.rate ?? 0}
+            </div>
           </div>
-        )}
-      </article>
+
+          <p style={{ opacity: 0.9 }}>{product.description}</p>
+
+          <div style={{ marginTop: 12 }}>
+            <button
+              className='btn btn--primary'
+              onClick={handleGenerate}
+              disabled={aiLoading}
+            >
+              {aiLoading ? 'Genererar…' : 'Generera förbättrad beskrivning'}
+            </button>
+          </div>
+
+          {aiText && (
+            <div
+              className='info'
+              aria-live='polite'
+              style={{ whiteSpace: 'pre-wrap', marginTop: 12 }}
+            >
+              {aiText}
+            </div>
+          )}
+        </article>
+      </section>
     </main>
   );
 }
