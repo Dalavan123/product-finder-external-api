@@ -1,20 +1,20 @@
-Retail Product Finder – (AI Text Booster för vidare utveckling)
+# Retail Product Finder – (AI Text Booster för vidare utveckling)
 
 En liten React-app som:
 
-listar produkter (DummyJSON API) med sök / filtrering / sortering
+Listar produkter (DummyJSON API) med sök / filtrering / sortering
 
-visar produktsida med bild, pris & betyg
+Visar produktsida med bild, pris & betyg
 
-har en AI-knapp som genererar förbättrad produkttext (idag lokal mot mockad text, se vidare i förbättring...)
+Har en AI-knapp som genererar förbättrad produkttext (idag lokal mot mockad text, se vidare i förbättring...)
 
-tillgänglighetsanpassad med etiketter, aria-live bl.a.
+Tillgänglighetsanpassad med etiketter, aria-live bl.a.
 
 Responsiv grid: repeat(auto-fit, minmax(220px, 1fr)), dvs. autoanpassar objekten till skärmens storlek, mobil/minst storlek visar 1 kolumn
 
-har enhetstester (Vitest) och E2E (Cypress)
+Har enhetstester (Vitest) och E2E (Cypress)
 
-Användningsområden
+Användningsområden:
 
 Prototyp för e-handelns produktlistning och detaljsida
 
@@ -26,41 +26,79 @@ Kopplad mot riktig AI för att få prova på riktig textförbättring av diverse
 
 Omvandling till lokal valuta & språk (sv/eng)
 
-Mappstruktur (kort)
+```
 ProductFinder/
 ├─ package.json — scripts & beroenden
-├─ vite.config.js — Vite + Vitest + proxy /api → 5174
-├─ eslint.config.js — lint-regler
-├─ cypress.config.js — Cypress-inställningar
-├─ index.html — #root + <meta viewport>
+├─ vite.config.js — Vite + Vitest-konfig (+ /api-proxy)
+├─ eslint.config.js — lint-regler för JS/React
+├─ cypress.config.js — Cypress-inställningar (baseUrl m.m.)
+├─ index.html — bas-HTML med #root + <meta viewport>
+├─ README.md
+├─ public/ — statiska tillgångar (om du behöver)
+│
 ├─ src/
-│ ├─ main.jsx / App.jsx
-│ ├─ styles/global.css
-│ ├─ components/ — Controls, ProductCard, ThemeToggle
-│ ├─ pages/ — Home, ProductDetail (+ tester)
-│ ├─ lib/ — apiClient (+ cache/normalisering), validators
-│ └─ tests/ — Vitest setup + fixtures
-├─ server/ — Express (5174) + /api/generate
-└─ cypress/ — e2e/smoke.cy.js + fixtures
+│ ├─ main.jsx — React entrypoint (mountar <App/>)
+│ ├─ App.jsx — routing: "/" och "/product/:id"
+│ ├─ index.css — (valfritt) samlar grund-CSS
+│ │
+│ ├─ styles/
+│ │ └─ global.css — appens styling (grid, knappar, tema)
+│ │
+│ ├─ assets/ — bilder/ikoner för UI
+│ │
+│ ├─ components/
+│ │ ├─ Controls.jsx — sök / kategori / sortering + Rensa
+│ │ ├─ ProductCard.jsx — produktkort (bild, pris, betyg, länk)
+│ │ ├─ ProductCard.test.jsx — enhetstest för ProductCard
+│ │ └─ ThemeToggle.jsx — mörkt/ljust läge
+│ │
+│ ├─ pages/
+│ │ ├─ Home.jsx — lista över produkter + filter/sort
+│ │ ├─ Home.test.jsx — test av Home (mockad fetch)
+│ │ ├─ ProductDetail.jsx — detaljsida + AI-knapp
+│ │ └─ ProductDetail.test.jsx — test av detaljsidan
+│ │
+│ ├─ lib/
+│ │ ├─ apiClient.js — fetch mot DummyJSON, normalisering,
+│ │ │ enkel cache (TTL) + bypass för test
+│ │ ├─ apiClient.test.js — tester för klienten (mockad payload)
+│ │ ├─ validators.js — sanering/validering av sök/kategori
+│ │ └─ validators.test.js — enkla valideringstester
+│ │
+│ └─ tests/
+│ ├─ setup.js — Vitest-setup (jsdom + fetch-mock)
+│ ├─ smoke.test.jsx — snabb “renderar utan att krascha”
+│ └─ fixtures/
+│ └─ dummyjson.products.js — deterministisk test-payload
+│
+├─ server/
+│ ├─ index.js — Express på http://localhost:5174
+│ └─ generate.js — /api/generate (AI-text, mock/proxy)
+│
+└─ cypress/
+├─ e2e/
+│ └─ smoke.cy.js — E2E-smoke: laddar detaljsida, backar
+└─ fixtures/
+└─ dummyjson.products.json — E2E-fixture för produkter
+```
 
-Kom igång
+Kom igång:
+
 Förkrav
-
 Node 18+ (rekommenderat 18/20)
-
 Internetåtkomst (DummyJSON nås online)
 
 Installation
 
 # klona & installera
 
-npm install
+kommando i terminal: npm install
 
 Starta i utvecklingsläge
 
 # startar Vite (5173 för frontend) + Express-API (5174 för backend mockad AI-text) samtidigt
 
-npm run dev:all (Om man vill köra i en terminal)
+kommando i terminal: npm run dev:all (Om man vill köra i en terminal)
 
 Frontend körs då på: http://localhost:5173
 
@@ -70,7 +108,7 @@ Vite proxar /api/\* till 5174 (se vite.config.js)
 
 # Endast frontend (om du inte behöver AI-knappen just nu)
 
-npm run dev
+kommando i terminal: npm run dev
 
 Då fungerar listan/detaljsidan (DummyJSON), men AI-knappen får 404 tills servern är igång.
 
@@ -85,7 +123,7 @@ Kommandon:
 
 # watch-läge (utveckling)
 
-npm run test
+kommando i terminal: npm run test
 
 # Förväntad testoutput (exempel):
 
@@ -97,24 +135,24 @@ E2E (Cypress)
 Cypress kör appen i en riktig browser och klickar runt som en användare.
 
 1. Dev + Cypress UI (test i Cypress UI mot mockat API-lager)
-   npm run e2e:dev
+   kommando i terminal: npm run e2e:dev
 
 # startar Vite + öppnar Cypress GUI
 
 # välj "smoke.cy.js" och kör
 
 2. Headless (test i dev terminal mot mockat API-lager)
-   npm run e2e
+   kommando i terminal: npm run e2e
 
 3. Cypress mot “riktigt” API (DummyJSON)
 
 # UI
 
-npm run cy:open:real
+kommando i terminal: npm run cy:open:real
 
 # headless i dev endast
 
-npm run e2e:real
+kommando i terminal: npm run e2e:real
 
 # Dokumentation
 
