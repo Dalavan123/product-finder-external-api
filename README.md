@@ -14,6 +14,8 @@ Responsiv grid: repeat(auto-fit, minmax(220px, 1fr)), dvs. autoanpassar objekten
 
 Har enhetstester (Vitest) och E2E (Cypress)
 
+Filen validators gör en form av rensning av Html, onödiga värden/tecken som användaren matar in i sökfält.
+
 Användningsområden:
 
 Prototyp för e-handelns produktlistning och detaljsida

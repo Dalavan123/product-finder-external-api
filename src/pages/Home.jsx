@@ -3,12 +3,11 @@
  * Sida: Home (produktlista)
  * Gör: hämtar produkter + kategorier, låter användaren söka/filter/sortera
  * Varför så här?
- *  - Hämtning i useEffect + AbortController för att undvika state-uppdatering efter unmount 
- - (dvs. aborten tillåter appen avsluta en pågående fetch om komponenten försvinner/användaren lämnar sidan.)
+ *  - Hämtning i useEffect + AbortController för att undvika state-uppdatering efter unmount
+ *    (dvs. aborten tillåter appen avsluta en pågående fetch om komponenten försvinner/användaren lämnar sidan.)
  *  - Debounce på sök (200ms) för att undvika onödiga filteromräkningar
- *  - useMemo för att härleda "visibleProducts" effektivt (filter + sort endast när inputs ändras) 
- - (state är som ingredienser som sparar värden för respektive ingrediens, memo sparar samlade maträtten, om något omrenderas såsom mörkt läge så 
- håller memo kvar värdena utan att omrenderas)
+ *  - useMemo för att härleda "visibleProducts" effektivt (filter + sort endast när inputs ändras)
+ *    (state är ingredienserna; memo är den färdiga rätten som inte lagas om i onödan)
  */
 
 import { useEffect, useMemo, useState } from 'react';
@@ -46,7 +45,7 @@ export default function Home() {
         setCategories(cats);
         setStatus('success');
       } catch (err) {
-        // ignorera AbortError (den kastas när vi avbryter, behöver inte logga allt i konsollen)
+        // ignorera AbortError (den kastas när vi avbryter)
         if (err.name !== 'AbortError') {
           setError(err.message || 'Något gick fel');
           setStatus('error');
@@ -102,54 +101,63 @@ export default function Home() {
         className='page-header'
         style={{ display: 'flex', alignItems: 'center', gap: 12 }}
       >
-        <div>
+        <section>
           <h1>Produkter</h1>
           <p className='muted'>Data hämtas från ett externt API (DummyJSON).</p>
-        </div>
-        <div style={{ marginLeft: 'auto' }}>
+        </section>
+        <section aria-label='Tema' style={{ marginLeft: 'auto' }}>
           <ThemeToggle />
-        </div>
+        </section>
       </header>
 
-      <Controls
-        query={query}
-        onQuery={setQuery}
-        category={category}
-        onCategory={setCategory}
-        sort={sort}
-        onSort={setSort}
-        categories={categories}
-      />
+      {/* Filter- och sortkontroller */}
+      <section aria-label='Filter och sortering'>
+        <Controls
+          query={query}
+          onQuery={setQuery}
+          category={category}
+          onCategory={setCategory}
+          sort={sort}
+          onSort={setSort}
+          categories={categories}
+        />
+      </section>
 
       {/* aria-live gör att hjälpmedel (skärmläsare) får uppdatering när antal träffar ändras */}
-      <p aria-live='polite' className='muted' style={{ marginTop: 0 }}>
-        {status === 'success' ? `${visibleProducts.length} träffar` : '\u00A0'}
+      <p className='muted' style={{ marginTop: 0 }}>
+        <output aria-live='polite'>
+          {status === 'success' ? `${visibleProducts.length} träffar` : ' '}
+        </output>
       </p>
 
       {status === 'loading' && (
-        <div role='status' aria-live='polite' className='info'>
+        <aside role='status' aria-live='polite' className='info'>
           Laddar produkter…
-        </div>
+        </aside>
       )}
 
       {status === 'error' && (
-        <div role='alert' className='error'>
+        <aside role='alert' className='error'>
           {error}{' '}
           <button className='btn' onClick={() => location.reload()}>
             Försök igen
           </button>
-        </div>
+        </aside>
       )}
 
       {status === 'success' && (
-        <section aria-label='Produktlista' className='products-grid'>
-          {visibleProducts.map(p => (
-            <ProductCard key={p.id} product={p} />
-          ))}
+        <section aria-label='Produktlista'>
+          <ul className='products-grid' role='list'>
+            {visibleProducts.map(p => (
+              <li key={p.id}>
+                <ProductCard product={p} />
+              </li>
+            ))}
+          </ul>
           {visibleProducts.length === 0 && (
-            <div className='muted' role='status' style={{ padding: 12 }}>
+            <p className='muted' role='status' style={{ padding: 12 }}>
               Inga produkter matchar dina filter.
-            </div>
+            </p>
           )}
         </section>
       )}

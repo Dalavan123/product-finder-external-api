@@ -2,7 +2,8 @@
 /**
  * Sida: ProductDetail
  * Syfte: hämtar en specifik produkt (via id i URL) och visar detaljer.
- * Egen extra "Generera förbättrad beskrivning"-knapp som POST:ar till /api/generate.
+ * Extra: "Generera förbättrad beskrivning" som POST:ar till /api/generate.
+
  */
 
 import { useEffect, useState } from 'react';
@@ -83,9 +84,9 @@ export default function ProductDetail() {
   if (loading) {
     return (
       <main className='container'>
-        <p role='status' aria-live='polite'>
+        <aside role='status' aria-live='polite'>
           Laddar…
-        </p>
+        </aside>
       </main>
     );
   }
@@ -93,13 +94,14 @@ export default function ProductDetail() {
   if (error) {
     return (
       <main className='container'>
-        <p role='alert'>
+        <aside role='alert'>
           Kunde inte hämta produkten: {String(error.message || error)}
-        </p>
-        <Link className='btn' to='/'>
-          {' '}
-          ← Tillbaka{' '}
-        </Link>
+        </aside>
+        <nav aria-label='Tillbaka' style={{ marginTop: 12 }}>
+          <Link className='btn' to='/'>
+            ← Tillbaka
+          </Link>
+        </nav>
       </main>
     );
   }
@@ -107,51 +109,62 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <main className='container'>
-        <p role='alert'>Produkten saknas.</p>
-        <Link className='btn' to='/'>
-          ← Tillbaka
-        </Link>
+        <aside role='alert'>Produkten saknas.</aside>
+        <nav aria-label='Tillbaka' style={{ marginTop: 12 }}>
+          <Link className='btn' to='/'>
+            ← Tillbaka
+          </Link>
+        </nav>
       </main>
     );
   }
 
   return (
     <main className='container'>
-      <Link className='btn' to='/' style={{ marginBottom: 12 }}>
-        ← Tillbaka
-      </Link>
+      <nav aria-label='Tillbaka' style={{ marginBottom: 12 }}>
+        <Link className='btn' to='/'>
+          ← Tillbaka
+        </Link>
+      </nav>
 
-      <section className='product-detail'>
+      {/* En produkt = en artikel */}
+      <article className='product-detail'>
+        {/* Media */}
         <figure className='detail-media'>
           {product.image ? (
             <img src={product.image} alt={product.title} loading='lazy' />
           ) : (
-            <div className='muted' style={{ padding: 16 }}>
-              Ingen bild
-            </div>
+            <figcaption className='muted' style={{ padding: 16 }}>
+              Ingen bild tillgänglig
+            </figcaption>
           )}
         </figure>
 
-        <article className='detail-body'>
-          <h1 className='card-title' style={{ fontSize: '1.4rem' }}>
-            {product.title}
-          </h1>
+        {/* Innehåll */}
+        <section className='detail-body'>
+          <header>
+            <h1 className='card-title' style={{ fontSize: '1.4rem' }}>
+              {product.title}
+            </h1>
 
-          <div className='detail-meta'>
-            <div className='detail-price'>{formatPrice(product.price)}</div>
-            <div
-              className='detail-rating'
-              aria-label={`Betyg ${product?.rating?.rate ?? 0} av 5`}
-              title={`Betyg ${product?.rating?.rate ?? 0} av 5`}
-            >
-              <span aria-hidden='true'>⭐</span>
-              {product?.rating?.rate ?? 0}
-            </div>
-          </div>
+            {/* Metadata som termlista i stället för divs */}
+            <dl className='detail-meta'>
+              <dt>Pris</dt>
+              <dd className='detail-price'>{formatPrice(product.price)}</dd>
+
+              <dt>Betyg</dt>
+              <dd
+                className='detail-rating'
+                title={`Betyg ${product?.rating?.rate ?? 0} av 5`}
+              >
+                <span aria-hidden='true'>⭐</span> {product?.rating?.rate ?? 0}
+              </dd>
+            </dl>
+          </header>
 
           <p style={{ opacity: 0.9 }}>{product.description}</p>
 
-          <div style={{ marginTop: 12 }}>
+          <footer style={{ marginTop: 12 }}>
             <button
               className='btn btn--primary'
               onClick={handleGenerate}
@@ -159,19 +172,24 @@ export default function ProductDetail() {
             >
               {aiLoading ? 'Genererar…' : 'Generera förbättrad beskrivning'}
             </button>
-          </div>
+          </footer>
 
           {aiText && (
-            <div
-              className='info'
-              aria-live='polite'
-              style={{ whiteSpace: 'pre-wrap', marginTop: 12 }}
-            >
-              {aiText}
-            </div>
+            <section aria-labelledby='ai-desc-title' style={{ marginTop: 12 }}>
+              <h2 id='ai-desc-title' className='sr-only'>
+                Genererad beskrivning
+              </h2>
+              <output
+                className='info'
+                aria-live='polite'
+                style={{ whiteSpace: 'pre-wrap' }}
+              >
+                {aiText}
+              </output>
+            </section>
           )}
-        </article>
-      </section>
+        </section>
+      </article>
     </main>
   );
 }
