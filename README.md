@@ -158,23 +158,32 @@ kommando i terminal: npm run e2e:real
 
 # Dokumentation
 
+# Beskrivning av projekt
+
 Vid mottagandet av uppgiften fanns det så många API:er att skapa projektet till och projektidéer.
 Jag fastnade för en idé att skapa en produktsida mot ett FakeAPI och kombinera ihop det med AI-textgenereringsidé i hopp om att även få lära mig mer om hur man använder AI i projekt.
-Ser detta passa verksamheter som vill AI:s hjälp att generera säljande texter till sina produkter.
+Ser detta passa verksamheter som vill ha AI:s hjälp att generera säljande texter till sina produkter.
+
+# Utmaning kring AI-delen och tankesättet att behålla den icke färdiga utvecklingen, för att visa snabbt visa på förbättringspotential
 
 Under projektets gång insåg jag att den relativt korta tiden på en vecka inte gav mig möjlighet att
 fullborda idén med AI samt att jag lärde mig att de flesta AI-tjänster kostar (finns gratisalternativ för givet antal förfrågningar). Därmed är denna funktion ej färdigutvecklad i appen.
-Jag valde att inte plocka bort det jag har gjort hittills på AI-delen från mappstruktur och knapp i UI:et för att visa förbättringspotential om man vill ta projektet vidare.
+Jag valde att inte plocka bort det jag har gjort hittills på AI-delen från projektet och mappstrukturen, därmed kvarstår knappen i UI:et som generar förbättrad text, dock utifrån mockad textdata i koden. Detta för att visa förbättringspotential om man vill ta projektet i framtiden.
+
+# Testning
+
+Enhetstest gjordes via Vitest och inte Jest då Vitest redan är utvecklat för React-applikationer.
+Funktionstestning/e2e testning gjordes med Cypress.
+
+# Lärdomar
 
 Projektet var lärorikt och utmanande för mig på många sätt.
 Det var roligt att få jobba mot API:n.
 Jag började faktiskt med FakeStore-API:et då vi i klassrum hade påbörjat på den, men under projektet ändrade jag mig och vill visa upp annat API så det blev DummyJson-API. Då jag hade skapat en Base-URL så var det inte så krävande att byta API mitt i projektets gång.
 Dock fick jag lära mig att testerna behövdes skriva om för att passa det nya API:ets struktur.
 
-Enhetstest gjordes via Vitest och inte Jest då Vitest redan är utvecklat för React-applikationer.
+När jag kom till e2e-testning via Cypress var det mycket som inte funkade (enhetstest via Vitest gick smidigare) och det krävdes mycket korrigering av kod för att få det att funka. En lärdom här var att tänka ännu mer testdrivet, dvs. att skapa testet först innan utvecklingen vilket jag flertalet gånger missade.
 
-När jag kom till e2e-testning via Cypress var det mycket som inte funkade (enhetstest via Viatest gick smidigare till) och det krävdes mycket korrigering av kod för att få det att funka.
-
-Mot slutet av projektet när jag trodde jag var vid mål kraschade appen av någon anledning och jag fick ta extra mycket hjälp av AI att felsöka, plockade bort det mesta av koden och lägga tillbaka lite i taget. Någonstans hade hängt sig.
+Mot slutet av projektet när jag trodde jag var vid mål kraschade appen av någon anledning och jag fick ta extra mycket hjälp av AI att felsöka, plockade bort det mesta av koden och lägga tillbaka lite i taget. Någonstans hade det hängt sig.
 
 Ännu närmre målet fick jag GIT-konflikter något jag inte fått tidigare under projektet, så här lärde jag mig att GIT-konfikter kan uppstå även när man jobbar i enmansprojekt och inte bara i grupp.
