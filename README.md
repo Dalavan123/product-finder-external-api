@@ -36,7 +36,7 @@
 - **Tillgänglighetsanpassning**: etiketter, `aria-live`, tangentbordsstöd
 - **Responsiv grid**: `repeat(auto-fit, minmax(220px, 1fr))`
 - **Tester**: Enhetstester (Vitest) och E2E (Cypress)
-- **Inputsanering** via `validators` för sökfält m.m.
+- **Inputsanering** dvs. rensning från onödiga tecken, samt validering via `validators` för sökfält m.m.
 
 ## Tekniker
 
@@ -98,7 +98,7 @@ Listan/detaljsidan fungerar, men AI‑knappen ger **404** tills backend är igå
 
 ### Enhetstester (Vitest)
 
-Snabba och deterministiska tack vare mockad `fetch` i `src/tests/setup.js`.
+Snabba tack vare mockad `fetch` i `src/tests/setup.js`.
 
 ```bash
 npm run test
@@ -203,14 +203,14 @@ ProductFinder/
 ## Arkitektur i korthet
 
 - **Routing**: React Router (`/` & `/product/:id`)
-- **Data**: `apiClient` hämtar från DummyJSON, har enkel **cache (TTL)** och testvänlig design
+- **Data**: `apiClient` hämtar från DummyJSON, har och testvänlig design
 - **UI**: semantiska element (`<main>`, `<header>`, `<section>`, `<article>`, `<ul>/<li>`, `<figure>`, `<output>`) och ARIA
 - **AI**: `POST /api/generate` (mockad i Express‑servern) – lätt att byta till riktig AI‑tjänst
 
 ## Tillgänglighet
 
 - Tydliga etiketter för kontroller
-- `aria-live` för träffräknare och genererad text
+- `aria-live` för genererad text
 - Tangentbordsnavigering + fokusmarkering
 - Alt‑texter / beskrivningar för media
 
@@ -218,8 +218,7 @@ ProductFinder/
 
 - Koppla **riktig AI‑tjänst** för textförbättring
 - **Lokal valuta & språk** (t.ex. sv/eng, SEK/USD)
-- Bättre felhantering (retry/timeout), loading‑skelett
-- Liten bild‑CDN/cache för snabbare listning
+- Bättre felhantering
 
 ## Reflektion
 
@@ -228,7 +227,7 @@ ProductFinder/
 ### Varför jag bytte API (FakeStore → DummyJSON)
 
 Jag började på FakeStore eftersom vi använt det i klassrummet, men ville visa ett annat API i inlämningen och bytte därför till **DummyJSON**. Tack vare en tydlig **bas-URL/`apiClient`** blev bytet smidigt i själva appen.  
-**Lärdom:** Tester behövde uppdateras eftersom datastrukturen skiljde sig. En bra klient-abstraktion sparade tid, men testdatan måste spegla verkligheten.
+**Lärdom:** Tester behövde uppdateras eftersom datastrukturen skiljde sig. En kod som separerar kommunikationen mot AI:et sparade tid, men testdatan måste spegla verkligheten.
 
 ### Testning: Vitest gick smidigt, Cypress krävde mer jobb
 
@@ -254,9 +253,7 @@ Jag lät AI-delen vara **mockad** för att undvika kostnader och nyckelhantering
 ### Vad jag tar med mig till nästa projekt
 
 1. **Mer TDD:** skriv testet först (särskilt för kritiska flöden).
-2. **CI-kedja:** kör Vitest + Cypress på varje push/PR.
-3. **Bättre felhantering:** retry/timeout och tydliga tomlägen/loading-skelett.
-4. **Kontrakttester mot API:** fångar tidigt brytande ändringar.
-5. **Riktig AI-tjänst** bakom samma endpoint med rate-limit och fallback till mock.
+2. **CI-kedja:** en liten "robot" som kör testerna Vitest + Cypress på varje push/pull request.
+3. **Riktig AI-tjänst** bakom samma endpoint med rate-limit och fallback till mock.
 
-> ✨ **Slutsats:** Projektet gav mig praktisk vana i att byta API, bygga tillgängligt UI och göra appen testbar. Jag ser tydliga vägar framåt och har konkretiserat hur jag jobbar mer testdrivet och robust i nästa iteration.
+> ✨ **Slutsats:** Projektet gav mig praktisk vana i att byta API, bygga tillgängligt UI och göra appen testbar. Jag ser förbättringsmöjligheter i mitt eget arbetssätt att arbeta mer testdrivet framåt.
