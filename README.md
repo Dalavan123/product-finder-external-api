@@ -221,13 +221,7 @@ ProductFinder/
 - Bättre felhantering (retry/timeout), loading‑skelett
 - Liten bild‑CDN/cache för snabbare listning
 
-## Reflektion i korthet
-
-Projektet demonstrerar API‑integration, tillgänglig semantisk markup och en testbar arkitektur. AI‑delen är medvetet **mockad** för att visa **förbättringspotential** och hålla kostnader nere under utveckling. Bytet från FakeStore till DummyJSON möjliggjordes av en tydlig `apiClient` med bas‑URL, men krävde justeringar i testerna. Cypress‑delen gav viktiga lärdomar kring testdrivet arbetssätt och stabila selektorer. Git‑konflikter uppstod sent i projektet och löstes genom små inkrementella commits och återställning i mindre steg.
-
-## Reflektion i längre version
-
-## Reflektion – längre version
+## Reflektion
 
 > 🧭 **Kort sammanfattning:** Jag byggde en liten e-shop med fokus på semantik, testbarhet och API-integration. Under resan bytte jag API, brottades med E2E-tester och lärde mig mycket om felsökning och Git-flöden.
 
