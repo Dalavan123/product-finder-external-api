@@ -33,7 +33,7 @@
 - Lista produkter med **sök / filter / sortering**
 - **Produktsida** med bild, pris & betyg
 - **AI‑knapp** som genererar förbättrad beskrivning (idag mockad endpoint)
-- **Tillgänglighetsanpassning**: korrekta etiketter, `aria-live`, tangentbordsstöd
+- **Tillgänglighetsanpassning**: etiketter, `aria-live`, tangentbordsstöd
 - **Responsiv grid**: `repeat(auto-fit, minmax(220px, 1fr))`
 - **Tester**: Enhetstester (Vitest) och E2E (Cypress)
 - **Inputsanering** via `validators` för sökfält m.m.
@@ -82,15 +82,15 @@ Listan/detaljsidan fungerar, men AI‑knappen ger **404** tills backend är igå
 
 ### Nyttiga NPM‑scripts
 
-| Script         | Beskrivning                                |
-| -------------- | ------------------------------------------ |
-| `dev`          | Startar Vite (frontend)                    |
-| `dev:all`      | Startar **Vite + Express‑API** parallellt  |
-| `test`         | Vitest i watch‑läge                        |
-| `e2e:dev`      | Startar Vite och öppnar **Cypress UI**     |
-| `e2e`          | Kör Cypress headless                       |
-| `cy:open:real` | Cypress UI mot **riktigt** API (DummyJSON) |
-| `e2e:real`     | Cypress headless mot **riktigt** API       |
+| Script                 | Beskrivning                                |
+| ---------------------- | ------------------------------------------ |
+| `npm run dev`          | Startar Vite (frontend)                    |
+| `npm dev:all`          | Startar **Vite + Express‑API** parallellt  |
+| `npm run test`         | Vitest i watch‑läge                        |
+| `npm run e2e:dev`      | Startar Vite och öppnar **Cypress UI**     |
+| `npm run e2e`          | Kör Cypress headless                       |
+| `npm run cy:open:real` | Cypress UI mot **riktigt** API (DummyJSON) |
+| `npm e2e:real`         | Cypress headless mot **riktigt** API       |
 
 ---
 
@@ -221,6 +221,10 @@ ProductFinder/
 - Bättre felhantering (retry/timeout), loading‑skelett
 - Liten bild‑CDN/cache för snabbare listning
 
-## Reflektion
+## Reflektion i korthet
 
 Projektet demonstrerar API‑integration, tillgänglig semantisk markup och en testbar arkitektur. AI‑delen är medvetet **mockad** för att visa **förbättringspotential** och hålla kostnader nere under utveckling. Bytet från FakeStore till DummyJSON möjliggjordes av en tydlig `apiClient` med bas‑URL, men krävde justeringar i testerna. Cypress‑delen gav viktiga lärdomar kring testdrivet arbetssätt och stabila selektorer. Git‑konflikter uppstod sent i projektet och löstes genom små inkrementella commits och återställning i mindre steg.
+
+## Reflektion i längre version
+
+Projektet var lärorikt och utmanande för mig på många sätt. Det var roligt att få jobba mot API:n. Jag började faktiskt med FakeStore-API:et då vi i klassrum hade påbörjat på den, men under projektet ändrade jag mig och vill visa upp annat API så det blev DummyJson-API. Då jag hade skapat en Base-URL så var det inte så krävande att byta API mitt i projektets gång. Dock fick jag lära mig att testerna behövdes skriva om för att passa det nya API:ets struktur. När jag kom till e2e-testning via Cypress var det mycket som inte funkade (enhetstest via Vitest gick smidigare) och det krävdes mycket korrigering av kod för att få det att funka. En lärdom här var att tänka ännu mer testdrivet, dvs. att skapa testet först innan utvecklingen vilket jag flertalet gånger missade. Mot slutet av projektet när jag trodde jag var vid mål kraschade appen av någon anledning och jag fick ta extra mycket hjälp av AI att felsöka, plockade bort det mesta av koden och lägga tillbaka lite i taget. Någonstans hade det hängt sig. Ännu närmre målet fick jag GIT-konflikter något jag inte fått tidigare under projektet, så här lärde jag mig att GIT-konfikter kan uppstå även när man jobbar i enmansprojekt och inte bara i grupp.
