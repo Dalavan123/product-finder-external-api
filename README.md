@@ -226,14 +226,14 @@ ProductFinder/
 
 ### Varför jag bytte API (FakeStore → DummyJSON)
 
-Jag började på FakeStore eftersom vi använt det i klassrummet, men ville visa ett annat API i inlämningen och bytte därför till **DummyJSON**. Tack vare en tydlig **bas-URL/`apiClient`** blev bytet smidigt i själva appen.  
-**Lärdom:** Tester behövde uppdateras eftersom datastrukturen skiljde sig. En kod som separerar kommunikationen mot AI:et sparade tid, men testdatan måste spegla verkligheten.
+Jag började på FakeStore API eftersom vi använt det i klassrummet, men ville visa ett annat API i inlämningen och bytte därför till **DummyJSON**. Tack vare en tydlig **bas-URL/`apiClient`** blev bytet smidigt i själva appen.  
+**Lärdom:** Tester behövdes dock uppdateras eftersom datastrukturen skiljde sig. En lärdom är att kod som separerar kommunikationen mot AI:et sparar tid och gör byte av API smidigare, men testdatan måste spegla verkligheten därav måste man köra testet igen och anpassa den till nytt API.
 
 ### Testning: Vitest gick smidigt, Cypress krävde mer jobb
 
-- **Enhetstester (Vitest):** Gick snabbt tack vare mockad `fetch` och tydliga komponentgränser.
-- **E2E (Cypress):** Krävde stabila selektorer och mer setup. Jag fick skriva om flera saker för att få flödena att bli robusta.  
-  **Lärdom:** Jag borde arbetat mer **testdrivet** (skriva testet först). När jag gjorde det blev utvecklingen lugnare.
+- **Enhetstester (Vitest):** Gick snabbt tack vare mockad `fetch`.
+- **E2E (Cypress):** Krävde mer setup. Jag fick skriva om flera saker för att få flödena att bli robusta.  
+  **Lärdom:** Jag borde arbetat mer **testdrivet** (skriva testet först). När jag gjorde det blev utvecklingen smidigare.
 
 ### Felsökning mot slutet
 
