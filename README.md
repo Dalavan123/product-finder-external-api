@@ -227,4 +227,42 @@ Projektet demonstrerar API‑integration, tillgänglig semantisk markup och en t
 
 ## Reflektion i längre version
 
-Projektet var lärorikt och utmanande för mig på många sätt. Det var roligt att få jobba mot API:n. Jag började faktiskt med FakeStore-API:et då vi i klassrum hade påbörjat på den, men under projektet ändrade jag mig och vill visa upp annat API så det blev DummyJson-API. Då jag hade skapat en Base-URL så var det inte så krävande att byta API mitt i projektets gång. Dock fick jag lära mig att testerna behövdes skriva om för att passa det nya API:ets struktur. När jag kom till e2e-testning via Cypress var det mycket som inte funkade (enhetstest via Vitest gick smidigare) och det krävdes mycket korrigering av kod för att få det att funka. En lärdom här var att tänka ännu mer testdrivet, dvs. att skapa testet först innan utvecklingen vilket jag flertalet gånger missade. Mot slutet av projektet när jag trodde jag var vid mål kraschade appen av någon anledning och jag fick ta extra mycket hjälp av AI att felsöka, plockade bort det mesta av koden och lägga tillbaka lite i taget. Någonstans hade det hängt sig. Ännu närmre målet fick jag GIT-konflikter något jag inte fått tidigare under projektet, så här lärde jag mig att GIT-konfikter kan uppstå även när man jobbar i enmansprojekt och inte bara i grupp.
+## Reflektion – längre version
+
+> 🧭 **Kort sammanfattning:** Jag byggde en liten e-shop med fokus på semantik, testbarhet och API-integration. Under resan bytte jag API, brottades med E2E-tester och lärde mig mycket om felsökning och Git-flöden.
+
+### Varför jag bytte API (FakeStore → DummyJSON)
+
+Jag började på FakeStore eftersom vi använt det i klassrummet, men ville visa ett annat API i inlämningen och bytte därför till **DummyJSON**. Tack vare en tydlig **bas-URL/`apiClient`** blev bytet smidigt i själva appen.  
+**Lärdom:** Tester behövde uppdateras eftersom datastrukturen skiljde sig. En bra klient-abstraktion sparade tid, men testdatan måste spegla verkligheten.
+
+### Testning: Vitest gick smidigt, Cypress krävde mer jobb
+
+- **Enhetstester (Vitest):** Gick snabbt tack vare mockad `fetch` och tydliga komponentgränser.
+- **E2E (Cypress):** Krävde stabila selektorer och mer setup. Jag fick skriva om flera saker för att få flödena att bli robusta.  
+  **Lärdom:** Jag borde arbetat mer **testdrivet** (skriva testet först). När jag gjorde det blev utvecklingen lugnare.
+
+### Felsökning mot slutet
+
+Strax före målgång kraschade appen utan tydlig orsak. Jag använde AI-stöd, plockade isär koden och **byggde upp i små steg** tills felet försvann.  
+**Lärdom:** Små, inkrementella förändringar och systematisk isolering gör felsökning effektiv.
+
+### Git-konflikter – även i solo-projekt
+
+Jag fick **Git-konflikter** trots att jag jobbade ensam. Det handlade främst om parallella ändringar som krockade.  
+**Lärdom:** Små commits, tydliga meddelanden och att rebase/merge ofta minskar friktionen – konflikter kan hända även utan team.
+
+### AI-delen – medvetet mockad
+
+Jag lät AI-delen vara **mockad** för att undvika kostnader och nyckelhantering under inlämningen. Gränssnittet finns (POST `/api/generate`), vilket gör det lätt att koppla på en riktig tjänst senare.  
+**Lärdom:** Det är okej att visa **förbättringspotential** om resten av arkitekturen är redo.
+
+### Vad jag tar med mig till nästa projekt
+
+1. **Mer TDD:** skriv testet först (särskilt för kritiska flöden).
+2. **CI-kedja:** kör Vitest + Cypress på varje push/PR.
+3. **Bättre felhantering:** retry/timeout och tydliga tomlägen/loading-skelett.
+4. **Kontrakttester mot API:** fångar tidigt brytande ändringar.
+5. **Riktig AI-tjänst** bakom samma endpoint med rate-limit och fallback till mock.
+
+> ✨ **Slutsats:** Projektet gav mig praktisk vana i att byta API, bygga tillgängligt UI och göra appen testbar. Jag ser tydliga vägar framåt och har konkretiserat hur jag jobbar mer testdrivet och robust i nästa iteration.
