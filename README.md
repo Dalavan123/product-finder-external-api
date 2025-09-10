@@ -1,189 +1,226 @@
-# Retail Product Finder – (AI Text Booster för vidare utveckling)
+# Retail Product Finder
 
-En liten React-app som:
+> Minimal e‑shop med React + Vite som hämtar produkter från **DummyJSON**. Inkluderar en **AI‑knapp** (mockad backend) för att generera säljande produkttexter, tillgänglighetsanpassat UI och tester med **Vitest** & **Cypress**.
 
-Listar produkter (DummyJSON API) med sök / filtrering / sortering
+---
 
-Visar produktsida med bild, pris & betyg
+## Innehåll
 
-Har en AI-knapp som genererar förbättrad produkttext (idag lokal mot mockad text, se vidare i förbättring...)
+- [Funktioner](#funktioner)
+- [Tekniker](#tekniker)
+- [Kom igång](#kom-igång)
 
-Tillgänglighetsanpassad med etiketter, aria-live bl.a.
+  - [Förkrav](#förkrav)
+  - [Installation](#installation)
+  - [Köra appen](#köra-appen)
+  - [Nyttiga NPM‑scripts](#nyttiga-npm-scripts)
 
-Responsiv grid: repeat(auto-fit, minmax(220px, 1fr)), dvs. autoanpassar objekten till skärmens storlek, mobil/minst storlek visar 1 kolumn
+- [Testning](#testning)
 
-Har enhetstester (Vitest) och E2E (Cypress)
+  - [Enhetstester (Vitest)](#enhetstester-vitest)
+  - [E2E (Cypress)](#e2e-cypress)
 
-Filen validators gör en form av rensning av Html, onödiga värden/tecken som användaren matar in i sökfält.
+- [Projektstruktur](#projektstruktur)
+- [Arkitektur i korthet](#arkitektur-i-korthet)
+- [Tillgänglighet](#tillgänglighet)
+- [Förbättringar framåt](#förbättringar-framåt)
+- [Reflektion](#reflektion)
 
-Användningsområden:
+---
 
-Prototyp för e-handelns produktlistning och detaljsida
+## Funktioner
 
-Exempel på mockad testmiljö (snabba, förväntade tester)
+- Lista produkter med **sök / filter / sortering**
+- **Produktsida** med bild, pris & betyg
+- **AI‑knapp** som genererar förbättrad beskrivning (idag mockad endpoint)
+- **Tillgänglighetsanpassning**: korrekta etiketter, `aria-live`, tangentbordsstöd
+- **Responsiv grid**: `repeat(auto-fit, minmax(220px, 1fr))`
+- **Tester**: Enhetstester (Vitest) och E2E (Cypress)
+- **Inputsanering** via `validators` för sökfält m.m.
 
-Förbättringsmöjligheter:
+## Tekniker
 
-Kopplad mot riktig AI för att få prova på riktig textförbättring av diverse produkter.
+React, Vite, React Router, Express (mockad AI‑endpoint), Vitest, Testing Library, Cypress.
 
-Omvandling till lokal valuta & språk (sv/eng)
+---
+
+## Kom igång
+
+### Förkrav
+
+- Node **18+** (rekommenderat 18/20)
+- Internetåtkomst (DummyJSON)
+
+### Installation
+
+```bash
+# klona & installera
+npm install
+```
+
+### Köra appen
+
+#### Alternativ A — Frontend + mock‑API samtidigt
+
+```bash
+npm run dev:all
+```
+
+- Frontend: [http://localhost:5173](http://localhost:5173)
+- API (AI‑endpoint): [http://localhost:5174](http://localhost:5174)
+  Endpoint: `POST /api/generate`
+
+Vite **proxar** `/api/*` till 5174 (se `vite.config.js`).
+
+#### Alternativ B — Endast frontend (utan AI‑knappen)
+
+```bash
+npm run dev
+```
+
+Listan/detaljsidan fungerar, men AI‑knappen ger **404** tills backend är igång.
+
+### Nyttiga NPM‑scripts
+
+| Script         | Beskrivning                                |
+| -------------- | ------------------------------------------ |
+| `dev`          | Startar Vite (frontend)                    |
+| `dev:all`      | Startar **Vite + Express‑API** parallellt  |
+| `test`         | Vitest i watch‑läge                        |
+| `e2e:dev`      | Startar Vite och öppnar **Cypress UI**     |
+| `e2e`          | Kör Cypress headless                       |
+| `cy:open:real` | Cypress UI mot **riktigt** API (DummyJSON) |
+| `e2e:real`     | Cypress headless mot **riktigt** API       |
+
+---
+
+## Testning
+
+### Enhetstester (Vitest)
+
+Snabba och deterministiska tack vare mockad `fetch` i `src/tests/setup.js`.
+
+```bash
+npm run test
+```
+
+**Exempel på output**
+
+```
+Test Files 5 passed
+Tests 10 passed
+```
+
+### E2E (Cypress)
+
+Kör appen i en riktig browser och klickar runt som en användare.
+
+**Dev + Cypress UI**
+
+```bash
+npm run e2e:dev
+```
+
+Vite startas och **Cypress GUI** öppnas. Välj `smoke.cy.js` och kör.
+
+**Headless**
+
+```bash
+npm run e2e
+```
+
+**Mot riktigt API (DummyJSON)**
+
+```bash
+# UI
+npm run cy:open:real
+
+# headless
+npm run e2e:real
+```
+
+---
+
+## Projektstruktur
 
 ```
 ProductFinder/
-├─ package.json — scripts & beroenden
-├─ vite.config.js — Vite + Vitest-konfig (+ /api-proxy)
-├─ eslint.config.js — lint-regler för JS/React
-├─ cypress.config.js — Cypress-inställningar (baseUrl m.m.)
-├─ index.html — bas-HTML med #root + <meta viewport>
+├─ package.json              # scripts & beroenden
+├─ vite.config.js            # Vite + Vitest‑konfig (+ /api‑proxy)
+├─ eslint.config.js          # lint‑regler för JS/React
+├─ cypress.config.js         # Cypress‑inställningar (baseUrl m.m.)
+├─ index.html                # bas‑HTML med #root + <meta viewport>
 ├─ README.md
-├─ public/ — statiska tillgångar (om du behöver)
+├─ public/
 │
 ├─ src/
-│ ├─ main.jsx — React entrypoint (mountar <App/>)
-│ ├─ App.jsx — routing: "/" och "/product/:id"
-│ ├─ index.css — (valfritt) samlar grund-CSS
-│ │
-│ ├─ styles/
-│ │ └─ global.css — appens styling (grid, knappar, tema)
-│ │
-│ ├─ assets/ — bilder/ikoner för UI
-│ │
-│ ├─ components/
-│ │ ├─ Controls.jsx — sök / kategori / sortering + Rensa
-│ │ ├─ ProductCard.jsx — produktkort (bild, pris, betyg, länk)
-│ │ ├─ ProductCard.test.jsx — enhetstest för ProductCard
-│ │ └─ ThemeToggle.jsx — mörkt/ljust läge
-│ │
-│ ├─ pages/
-│ │ ├─ Home.jsx — lista över produkter + filter/sort
-│ │ ├─ Home.test.jsx — test av Home (mockad fetch)
-│ │ ├─ ProductDetail.jsx — detaljsida + AI-knapp
-│ │ └─ ProductDetail.test.jsx — test av detaljsidan
-│ │
-│ ├─ lib/
-│ │ ├─ apiClient.js — fetch mot DummyJSON, normalisering,
-│ │ │ enkel cache (TTL) + bypass för test
-│ │ ├─ apiClient.test.js — tester för klienten (mockad payload)
-│ │ ├─ validators.js — sanering/validering av sök/kategori
-│ │ └─ validators.test.js — enkla valideringstester
-│ │
-│ └─ tests/
-│ ├─ setup.js — Vitest-setup (jsdom + fetch-mock)
-│ ├─ smoke.test.jsx — snabb “renderar utan att krascha”
-│ └─ fixtures/
-│ └─ dummyjson.products.js — deterministisk test-payload
+│  ├─ main.jsx               # React entry (mountar <App/>)
+│  ├─ App.jsx                # routing: "/" och "/product/:id"
+│  ├─ index.css              # (valfritt) grund‑CSS
+│  │
+│  ├─ styles/
+│  │  └─ global.css          # appens styling (grid, knappar, tema)
+│  │
+│  ├─ assets/                # UI‑bilder/ikoner
+│  │
+│  ├─ components/
+│  │  ├─ Controls.jsx        # sök / kategori / sortering + Rensa
+│  │  ├─ ProductCard.jsx     # produktkort (bild, pris, betyg, länk)
+│  │  ├─ ProductCard.test.jsx
+│  │  └─ ThemeToggle.jsx     # mörkt/ljust läge
+│  │
+│  ├─ pages/
+│  │  ├─ Home.jsx            # lista över produkter + filter/sort
+│  │  ├─ Home.test.jsx
+│  │  ├─ ProductDetail.jsx   # detaljsida + AI‑knapp
+│  │  └─ ProductDetail.test.jsx
+│  │
+│  ├─ lib/
+│  │  ├─ apiClient.js        # fetch mot DummyJSON + enkel cache (TTL)
+│  │  ├─ apiClient.test.js
+│  │  ├─ validators.js       # sanering/validering av sök/kategori
+│  │  └─ validators.test.js
+│  │
+│  └─ tests/
+│     ├─ setup.js            # Vitest‑setup (jsdom + fetch‑mock)
+│     ├─ smoke.test.jsx      # “renderar utan att krascha”
+│     └─ fixtures/
+│        └─ dummyjson.products.js
 │
 ├─ server/
-│ ├─ index.js — Express på http://localhost:5174
-│ └─ generate.js — /api/generate (AI-text, mock/proxy)
+│  ├─ index.js               # Express @ http://localhost:5174
+│  └─ generate.js            # /api/generate (AI‑text, mock/proxy)
 │
 └─ cypress/
-├─ e2e/
-│ └─ smoke.cy.js — E2E-smoke: laddar detaljsida, backar
-└─ fixtures/
-└─ dummyjson.products.json — E2E-fixture för produkter
+   ├─ e2e/
+   │  └─ smoke.cy.js         # E2E‑smoke: öppnar detaljsida, backar
+   └─ fixtures/
+      └─ dummyjson.products.json
 ```
 
-Kom igång:
+---
 
-Förkrav
-Node 18+ (rekommenderat 18/20)
-Internetåtkomst (DummyJSON nås online)
+## Arkitektur i korthet
 
-Installation
+- **Routing**: React Router (`/` & `/product/:id`)
+- **Data**: `apiClient` hämtar från DummyJSON, har enkel **cache (TTL)** och testvänlig design
+- **UI**: semantiska element (`<main>`, `<header>`, `<section>`, `<article>`, `<ul>/<li>`, `<figure>`, `<output>`) och ARIA
+- **AI**: `POST /api/generate` (mockad i Express‑servern) – lätt att byta till riktig AI‑tjänst
 
-# klona & installera
+## Tillgänglighet
 
-kommando i terminal: npm install
+- Tydliga etiketter för kontroller
+- `aria-live` för träffräknare och genererad text
+- Tangentbordsnavigering + fokusmarkering
+- Alt‑texter / beskrivningar för media
 
-Starta i utvecklingsläge
+## Förbättringar framåt
 
-# startar Vite (5173 för frontend) + Express-API (5174 för backend mockad AI-text) samtidigt
+- Koppla **riktig AI‑tjänst** för textförbättring
+- **Lokal valuta & språk** (t.ex. sv/eng, SEK/USD)
+- Bättre felhantering (retry/timeout), loading‑skelett
+- Liten bild‑CDN/cache för snabbare listning
 
-kommando i terminal: npm run dev:all (Om man vill köra i en terminal)
+## Reflektion
 
-Frontend körs då på: http://localhost:5173
-
-API (AI-endpoint) körs på: http://localhost:5174 (/api/generate)
-
-Vite proxar /api/\* till 5174 (se vite.config.js)
-
-# Endast frontend (om du inte behöver AI-knappen just nu)
-
-kommando i terminal: npm run dev
-
-Då fungerar listan/detaljsidan (DummyJSON), men AI-knappen får 404 tills servern är igång.
-
-# Testning
-
-Testning
-Enhetstester (Vitest)
-
-Tester kör snabbt och offline tack vare mockad fetch i src/tests/setup.js.
-
-Kommandon:
-
-# watch-läge (utveckling)
-
-kommando i terminal: npm run test
-
-# Förväntad testoutput (exempel):
-
-Test Files 5 passed
-Tests 10 passed
-
-E2E (Cypress)
-
-Cypress kör appen i en riktig browser och klickar runt som en användare.
-
-1. Dev + Cypress UI (test i Cypress UI mot mockat API-lager)
-   kommando i terminal: npm run e2e:dev
-
-# startar Vite + öppnar Cypress GUI
-
-# välj "smoke.cy.js" och kör
-
-2. Headless (test i dev terminal mot mockat API-lager)
-   kommando i terminal: npm run e2e
-
-3. Cypress mot “riktigt” API (DummyJSON)
-
-# UI
-
-kommando i terminal: npm run cy:open:real
-
-# headless i dev endast
-
-kommando i terminal: npm run e2e:real
-
-# Dokumentation
-
-# Beskrivning av projekt
-
-Vid mottagandet av uppgiften fanns det så många API:er att skapa projektet till och projektidéer.
-Jag fastnade för en idé att skapa en produktsida mot ett FakeAPI och kombinera ihop det med AI-textgenereringsidé i hopp om att även få lära mig mer om hur man använder AI i projekt.
-Ser detta passa verksamheter som vill ha AI:s hjälp att generera säljande texter till sina produkter.
-
-# Utmaning kring AI-delen och tankesättet att behålla den icke färdiga utvecklingen, för att visa snabbt visa på förbättringspotential
-
-Under projektets gång insåg jag att den relativt korta tiden på en vecka inte gav mig möjlighet att
-fullborda idén med AI samt att jag lärde mig att de flesta AI-tjänster kostar (finns gratisalternativ för givet antal förfrågningar). Därmed är denna funktion ej färdigutvecklad i appen.
-Jag valde att inte plocka bort det jag har gjort hittills på AI-delen från projektet och mappstrukturen, därmed kvarstår knappen i UI:et som generar förbättrad text, dock utifrån mockad textdata i koden. Detta för att visa förbättringspotential om man vill ta projektet i framtiden.
-
-# Testning
-
-Enhetstest gjordes via Vitest och inte Jest då Vitest redan är utvecklat för React-applikationer.
-Funktionstestning/e2e testning gjordes med Cypress.
-
-# Lärdomar
-
-Projektet var lärorikt och utmanande för mig på många sätt.
-Det var roligt att få jobba mot API:n.
-Jag började faktiskt med FakeStore-API:et då vi i klassrum hade påbörjat på den, men under projektet ändrade jag mig och vill visa upp annat API så det blev DummyJson-API. Då jag hade skapat en Base-URL så var det inte så krävande att byta API mitt i projektets gång.
-Dock fick jag lära mig att testerna behövdes skriva om för att passa det nya API:ets struktur.
-
-När jag kom till e2e-testning via Cypress var det mycket som inte funkade (enhetstest via Vitest gick smidigare) och det krävdes mycket korrigering av kod för att få det att funka. En lärdom här var att tänka ännu mer testdrivet, dvs. att skapa testet först innan utvecklingen vilket jag flertalet gånger missade.
-
-Mot slutet av projektet när jag trodde jag var vid mål kraschade appen av någon anledning och jag fick ta extra mycket hjälp av AI att felsöka, plockade bort det mesta av koden och lägga tillbaka lite i taget. Någonstans hade det hängt sig.
-
-Ännu närmre målet fick jag GIT-konflikter något jag inte fått tidigare under projektet, så här lärde jag mig att GIT-konfikter kan uppstå även när man jobbar i enmansprojekt och inte bara i grupp.
+Projektet demonstrerar API‑integration, tillgänglig semantisk markup och en testbar arkitektur. AI‑delen är medvetet **mockad** för att visa **förbättringspotential** och hålla kostnader nere under utveckling. Bytet från FakeStore till DummyJSON möjliggjordes av en tydlig `apiClient` med bas‑URL, men krävde justeringar i testerna. Cypress‑delen gav viktiga lärdomar kring testdrivet arbetssätt och stabila selektorer. Git‑konflikter uppstod sent i projektet och löstes genom små inkrementella commits och återställning i mindre steg.
